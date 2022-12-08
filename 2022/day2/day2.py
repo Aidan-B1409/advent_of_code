@@ -1,49 +1,36 @@
 import pandas as pd
 
-element_scores = {
-    'Rock': 1,
-    'Paper': 2,
-    'Scissors': 3
-
-}
 #             Rock Paper Scissors
-# Rock         4     1      7    
+# Rock         4     1      7
 # Paper        8     5      2
 # Scissors     3     9      6
-ruleset = pd.DataFrame.from_dict({
-    'i': ['X', 'Y', 'Z'],
-    'A': [4, 8, 3],
-    'B': [1, 5, 9],
-    'C': [7, 2, 6]
-}).set_index('i')
 
+#            Lose   Tie   Win
+# Rock        3      4     8
+# Paper       1      5     9
+# Scissors    2      6     7
+ruleset = pd.DataFrame.from_dict(
+    {"i": ["X", "Y", "Z"], "A": [4, 8, 3], "B": [1, 5, 9], "C": [7, 2, 6]}
+).set_index("i")
 
-# A = 65
-# B = 66
-# C = 67
+# part 2
+winset = pd.DataFrame.from_dict(
+    {"i": ["X", "Y", "Z"], "A": [3, 4, 8], "B": [1, 5, 9], "C": [2, 6, 7]}
+).set_index("i")
 
-# A - B
-round_scores = {
-    'Lose': 0,
-    'Draw': 3,
-    'Win': 6
-}
-
-encryption = {
-    'Rock': ('A', 'X'),
-    'Paper': ('B', 'Y'),
-    'Scissors': ('C', 'Z')
-}
 
 def main():
-    sum = 0
-    print(ruleset)
-    with open('input.txt') as strategy_guide:
-        for line in strategy_guide.readlines():
-           l2 = line.strip('\n').split()
-           sum += ruleset[l2[0]][l2[1]]
-    print(sum)
+
+    with open("input.txt") as input:
+        print(
+            sum(
+                map(
+                    lambda x: winset[x[0]][x[1]],
+                    map(lambda x: x.strip("\n").split(), input.readlines()),
+                )
+            )
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
