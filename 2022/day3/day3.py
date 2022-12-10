@@ -1,3 +1,6 @@
+import more_itertools as it
+
+
 def nord(s: str) -> int:
     if s.islower():
         return ord(s) - 96
