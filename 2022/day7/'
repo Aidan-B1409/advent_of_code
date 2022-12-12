@@ -1,0 +1,50 @@
+import io
+
+# Cases:
+# cd .. : Walk back one node
+# cd <node> Create new node and enter it
+# <num> <filename>: Insert a new file
+
+
+def parse_command_tree(cmd_buf: io.TextIOWrapper) -> list:
+    files = []
+    while True:
+        cmd = cmd_buf.readline()
+        if "cd" in cmd:
+            if ".." in cmd:
+                return files
+            files.append(parse_command_tree(cmd_buf))
+            continue
+        if "ls" in cmd:
+            continue
+        cmd = cmd.split()
+        try:
+            files.append(int(cmd[0]))
+        except ValueError:
+            continue
+        except IndexError:
+            return files
+        continue
+
+
+def get_candidate_dirs(tree: list) -> int:
+    sum = 0
+    for e in tree:
+        print(e)
+        if isinstance(e, list):
+            tmp = get_candidate_dirs(e)
+            if tmp <= 100000:
+                sum += tmp
+            continue
+        sum += e
+    return sum
+
+
+def main() -> None:
+    with open("input.txt") as input:
+        fsystem = parse_command_tree(input)
+        print(get_candidate_dirs(fsystem))
+
+
+if __name__ == "__main__":
+    main()
