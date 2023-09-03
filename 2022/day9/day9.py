@@ -1,70 +1,73 @@
 from dataclasses import dataclass
+from typing import List
+import numpy as np
+
 
 @dataclass
 class Point:
     x: int
     y: int
 
+    def move(self, dir: str):
+        match dir:
+            case "R":
+                self._stepRight()
+            case "L":
+                self._stepLeft()
+            case "D":
+                self._stepDown()
+            case "U":
+                self._stepUp()
+
+    def _stepUp(self):
+        self.y += 1
+
+    def _stepDown(self):
+        self.y -= 1
+
+    def _stepRight(self):
+        self.x += 1
+
+    def _stepLeft(self):
+        self.x -= 1
+
+         
 # TODO - is there a soltion that doesn't involve globals?
-head = Point(0, 0)
-tail = Point(0, 0)
-# Moves should be processed sequentially
-# Move function should increase or decrease Point value based on coordinate and direction
-# Assosciate dictionary of move functions with L R U D values (first column)
-# Recursively process move within each function
-# Parent function with a move type function as a parameter? 
-# After each move, call checkTail function
-# If x or y delta is greater than 2, move tail accordingly
-
-moveset = {
-        'R': stepRight,
-        'L': stepLeft,
-        'D': stepDown,
-        'U': stepUp
-        }
-
-def stepUp(p: Point):
-    p.y += 1
+# head = Point(0, 0)
+# tail = Point(0, 0)
+tailPos = {"0_0": 1}
 
 
-def stepDown(p: Point):
-    p.y -=1
-
-
-def stepRight(p: Point):
-    p.x +=1
-
-
-def stepLeft(p: Point):
-    p.x -=1 
-
-
-def makeStep(direction: str):
-    moveset[direction](head)
+def makeStep(direction: str, node: Point):
+    node.move(direction)
 
 # TODO - keep track of every unique position for tail move
-# TODO - refactor for nicer solution that's not ugly if-else block
-# ---- is boundary checking a good use case for pattern matching?
 def updateTail():
-    if head.x - tail.x > 2:
-        pass
-    # elif head.y: #...
-    #     pass
+    delta_x = head.x - tail.x
+    delta_y = head.y - tail.y
+
+    if abs(delta_x) < 2 and abs(delta_y) < 2:
+        return
+    else:
+        tail.y += np.sign(delta_y)
+        tail.x += np.sign(delta_x)
+    tailPos[f"{tail.x}_{tail.y}"] = 1
 
 # Should have [Direction, Steps]
-def processMove(moves: List[str]):
+def processMove(moves: List[str], nodes: List[Point]):
     for step in range(int(moves[1])):
-        makeStep(direction=moves[0])
+        makeStep(moves[0], nodes[0])
         updateTail()
-        # TODO - Refactor for nicer solution
-        
 
 
 def main():
-    with open('input') as input:
+    nodes = [Point(0, 0) for _ in range(0, 2)]
+    print(len(nodes))
+    with open("input") as input:
         for line in input:
-            processMove(line.split())
+            processMove(line.split(), nodes)
+    print(len(tailPos.keys()))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
