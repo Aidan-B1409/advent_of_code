@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 from typing import List
+from dataclasses import dataclass
 import numpy as np
 
 
@@ -31,18 +31,18 @@ class Point:
     def _stepLeft(self):
         self.x -= 1
 
-         
-# TODO - is there a soltion that doesn't involve globals?
-# head = Point(0, 0)
-# tail = Point(0, 0)
-tailPos = {"0_0": 1}
+
+tailPos = {}
 
 
-def makeStep(direction: str, node: Point):
-    node.move(direction)
+def makeStep(direction: str, nodes: List[Point]):
+    nodes[0].move(direction)
+    for i in range(1, len(nodes)):
+        updateTail(head=nodes[i - 1], tail=nodes[i])
+    tailPos[f"{nodes[-1].x}_{nodes[-1].y}"] = 1
 
-# TODO - keep track of every unique position for tail move
-def updateTail():
+
+def updateTail(head: Point, tail: Point):
     delta_x = head.x - tail.x
     delta_y = head.y - tail.y
 
@@ -51,18 +51,16 @@ def updateTail():
     else:
         tail.y += np.sign(delta_y)
         tail.x += np.sign(delta_x)
-    tailPos[f"{tail.x}_{tail.y}"] = 1
 
-# Should have [Direction, Steps]
+
+# moves should have [Direction, Steps]
 def processMove(moves: List[str], nodes: List[Point]):
-    for step in range(int(moves[1])):
-        makeStep(moves[0], nodes[0])
-        updateTail()
+    for _ in range(int(moves[1])):
+        makeStep(moves[0], nodes)
 
 
 def main():
-    nodes = [Point(0, 0) for _ in range(0, 2)]
-    print(len(nodes))
+    nodes = [Point(0, 0) for _ in range(0, 10)]
     with open("input") as input:
         for line in input:
             processMove(line.split(), nodes)
